@@ -1,0 +1,9 @@
+.venv/
+*.egg-info/
+out/
+__pycache__/
+*.pyc
+.pytest_cache/
+derby.log
+metastore_db/
+spark-warehouse/

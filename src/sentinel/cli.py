@@ -1,24 +1,51 @@
 import argparse
+from collections.abc import Callable
 
+from sentinel.license_changes import write_license_changes
 from sentinel.model import Snapshot, SnapshotError, load_snapshot
 
 
 def main(argv: list[str] | None = None) -> int:
+    args = _parser().parse_args(argv)
+    command = _COMMANDS.get(args.command)
+    if command is None:
+        raise AssertionError(args.command)
+    try:
+        return command(args)
+    except SnapshotError as error:
+        print(error)
+        return 1
+
+
+def _fixture(args: argparse.Namespace) -> int:
+    print(render(load_snapshot(args.snapshot), args.team), end="")
+    return 0
+
+
+def _licenses(args: argparse.Namespace) -> int:
+    for change in write_license_changes(args.snapshot, args.output):
+        print(
+            f"{change.name} {change.version} previous {change.previous_license} license {change.license}"
+        )
+    return 0
+
+
+_COMMANDS: dict[str, Callable[[argparse.Namespace], int]] = {
+    "fixture": _fixture,
+    "licenses": _licenses,
+}
+
+
+def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sentinel")
     commands = parser.add_subparsers(dest="command", required=True)
     fixture = commands.add_parser("fixture")
     fixture.add_argument("--snapshot", default="fixtures/snapshot.json")
     fixture.add_argument("--team")
-    args = parser.parse_args(argv)
-    if args.command != "fixture":
-        raise AssertionError(args.command)
-    try:
-        text = render(load_snapshot(args.snapshot), args.team)
-    except SnapshotError as error:
-        print(error)
-        return 1
-    print(text, end="")
-    return 0
+    licenses = commands.add_parser("licenses")
+    licenses.add_argument("--snapshot", default="fixtures/snapshot.json")
+    licenses.add_argument("--output", default="out/license_change.parquet")
+    return parser
 
 
 def render(snapshot: Snapshot, team: str | None) -> str:
