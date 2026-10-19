@@ -1,0 +1,106 @@
+{
+  "packages": [
+    {
+      "system": "NPM",
+      "name": "widget",
+      "version": "1.0.0",
+      "license": "MIT",
+      "dependent_count": 4
+    },
+    {
+      "system": "NPM",
+      "name": "widget",
+      "version": "2.0.0",
+      "license": "SSPL",
+      "dependent_count": 4
+    },
+    {
+      "system": "NPM",
+      "name": "left-pad",
+      "version": "1.0.0",
+      "license": "MIT",
+      "dependent_count": 25
+    },
+    {
+      "system": "NPM",
+      "name": "left-pad",
+      "version": "1.1.0",
+      "license": "MIT",
+      "dependent_count": 25
+    },
+    {
+      "system": "NPM",
+      "name": "react",
+      "version": "18.3.1",
+      "license": "MIT",
+      "dependent_count": 100000
+    },
+    {
+      "system": "NPM",
+      "name": "raect",
+      "version": "1.0.0",
+      "license": "MIT",
+      "dependent_count": 0
+    },
+    {
+      "system": "NPM",
+      "name": "app-a",
+      "version": "1.0.0",
+      "license": "MIT",
+      "dependent_count": 0
+    },
+    {
+      "system": "NPM",
+      "name": "app-b",
+      "version": "1.0.0",
+      "license": "MIT",
+      "dependent_count": 0
+    }
+  ],
+  "dependencies": [
+    {
+      "system": "NPM",
+      "name": "app-a",
+      "version": "1.0.0",
+      "depends_on": {
+        "system": "NPM",
+        "name": "widget",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "system": "NPM",
+      "name": "app-b",
+      "version": "1.0.0",
+      "depends_on": {
+        "system": "NPM",
+        "name": "left-pad",
+        "version": "1.1.0"
+      }
+    }
+  ],
+  "teams": [
+    {
+      "team": "alpha",
+      "forbidden_licenses": ["SSPL"],
+      "roots": [
+        {
+          "system": "NPM",
+          "name": "app-a",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    {
+      "team": "beta",
+      "forbidden_licenses": [],
+      "roots": [
+        {
+          "system": "NPM",
+          "name": "app-b",
+          "version": "1.0.0"
+        }
+      ]
+    }
+  ]
+}

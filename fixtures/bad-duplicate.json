@@ -1,0 +1,16 @@
+{
+  "packages": [
+    {
+      "system": "NPM",
+      "name": "widget",
+      "version": "1.0.0",
+      "license": "MIT"
+    },
+    {
+      "system": "NPM",
+      "name": "widget",
+      "version": "1.0.0",
+      "license": "SSPL"
+    }
+  ]
+}
