@@ -16,9 +16,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "apache-airflow==2.10.5",
     "dbt-duckdb>=1.9",
     "duckdb>=1.1",
+    "protobuf>=6.31",
     "pytest>=8",
+    "typing-extensions>=4.14",
 ]
 
 [project.scripts]
