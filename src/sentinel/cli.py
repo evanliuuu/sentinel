@@ -1,6 +1,7 @@
 import argparse
 from collections.abc import Callable
 
+from sentinel.ask import answer
 from sentinel.license_changes import write_license_changes
 from sentinel.lookalikes import DEFAULT_POPULAR_THRESHOLD, write_lookalikes
 from sentinel.model import Snapshot, SnapshotError, load_snapshot
@@ -39,6 +40,14 @@ def _squats(args: argparse.Namespace) -> int:
     return 0
 
 
+def _ask(args: argparse.Namespace) -> int:
+    print(
+        answer(args.team, args.question, args.warehouse, args.snapshot, args.paragraph),
+        end="",
+    )
+    return 0
+
+
 def _policies(args: argparse.Namespace) -> int:
     write_policies(args.policy_dir, args.output_dir)
     print(f"wrote policies to {args.output_dir}")
@@ -55,6 +64,7 @@ _COMMANDS: dict[str, Callable[[argparse.Namespace], int]] = {
     "fixture": _fixture,
     "licenses": _licenses,
     "squats": _squats,
+    "ask": _ask,
     "policies": _policies,
     "scan": _scan,
 }
@@ -73,6 +83,12 @@ def _parser() -> argparse.ArgumentParser:
     squats.add_argument("--snapshot", default="fixtures/snapshot.json")
     squats.add_argument("--output", default="out/lookalikes.parquet")
     squats.add_argument("--popular-threshold", type=int, default=DEFAULT_POPULAR_THRESHOLD)
+    ask = commands.add_parser("ask")
+    ask.add_argument("--team", required=True)
+    ask.add_argument("--question", required=True)
+    ask.add_argument("--warehouse", default="out/warehouse.duckdb")
+    ask.add_argument("--snapshot", default="fixtures/snapshot.json")
+    ask.add_argument("--paragraph")
     policies = commands.add_parser("policies")
     policies.add_argument("--policy-dir", default="policies")
     policies.add_argument("--output-dir", default="out")
