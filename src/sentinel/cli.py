@@ -4,6 +4,7 @@ from collections.abc import Callable
 from sentinel.license_changes import write_license_changes
 from sentinel.lookalikes import DEFAULT_POPULAR_THRESHOLD, write_lookalikes
 from sentinel.model import Snapshot, SnapshotError, load_snapshot
+from sentinel.policies import write_policies
 from sentinel.scanners import write_scan
 
 
@@ -38,6 +39,12 @@ def _squats(args: argparse.Namespace) -> int:
     return 0
 
 
+def _policies(args: argparse.Namespace) -> int:
+    write_policies(args.policy_dir, args.output_dir)
+    print(f"wrote policies to {args.output_dir}")
+    return 0
+
+
 def _scan(args: argparse.Namespace) -> int:
     for row in write_scan(args.changes, args.output, args.tarballs):
         print(f"{row['name']} {row['source']} {row['label']} {row['note']}")
@@ -48,6 +55,7 @@ _COMMANDS: dict[str, Callable[[argparse.Namespace], int]] = {
     "fixture": _fixture,
     "licenses": _licenses,
     "squats": _squats,
+    "policies": _policies,
     "scan": _scan,
 }
 
@@ -65,6 +73,9 @@ def _parser() -> argparse.ArgumentParser:
     squats.add_argument("--snapshot", default="fixtures/snapshot.json")
     squats.add_argument("--output", default="out/lookalikes.parquet")
     squats.add_argument("--popular-threshold", type=int, default=DEFAULT_POPULAR_THRESHOLD)
+    policies = commands.add_parser("policies")
+    policies.add_argument("--policy-dir", default="policies")
+    policies.add_argument("--output-dir", default="out")
     scan = commands.add_parser("scan")
     scan.add_argument("--changes", default="out/license_change.parquet")
     scan.add_argument("--tarballs", default="fixtures/tarballs")

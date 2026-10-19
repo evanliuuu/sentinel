@@ -1,0 +1,7 @@
+team: alpha
+forbidden_licenses:
+  - SSPL
+roots:
+  - system: NPM
+    name: app-a
+    version: 1.0.0

@@ -33,4 +33,5 @@ models:
           - non_negative
     tests:
       - grain:
-          columns: ["system", "name", "version"]
+          arguments:
+            columns: ["system", "name", "version"]

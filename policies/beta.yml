@@ -1,0 +1,6 @@
+team: beta
+forbidden_licenses: []
+roots:
+  - system: NPM
+    name: app-b
+    version: 1.0.0

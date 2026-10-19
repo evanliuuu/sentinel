@@ -71,6 +71,13 @@ def _prepare() -> None:
         text=True,
     )
     subprocess.run(
+        [str(ROOT / ".venv/bin/sentinel"), "policies", "--output-dir", "out"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    subprocess.run(
         [
             str(ROOT / ".venv/bin/sentinel"),
             "scan",
