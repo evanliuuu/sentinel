@@ -4,6 +4,7 @@ from collections.abc import Callable
 from sentinel.license_changes import write_license_changes
 from sentinel.lookalikes import DEFAULT_POPULAR_THRESHOLD, write_lookalikes
 from sentinel.model import Snapshot, SnapshotError, load_snapshot
+from sentinel.scanners import write_scan
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -37,10 +38,17 @@ def _squats(args: argparse.Namespace) -> int:
     return 0
 
 
+def _scan(args: argparse.Namespace) -> int:
+    for row in write_scan(args.changes, args.output, args.tarballs):
+        print(f"{row['name']} {row['source']} {row['label']} {row['note']}")
+    return 0
+
+
 _COMMANDS: dict[str, Callable[[argparse.Namespace], int]] = {
     "fixture": _fixture,
     "licenses": _licenses,
     "squats": _squats,
+    "scan": _scan,
 }
 
 
@@ -57,6 +65,10 @@ def _parser() -> argparse.ArgumentParser:
     squats.add_argument("--snapshot", default="fixtures/snapshot.json")
     squats.add_argument("--output", default="out/lookalikes.parquet")
     squats.add_argument("--popular-threshold", type=int, default=DEFAULT_POPULAR_THRESHOLD)
+    scan = commands.add_parser("scan")
+    scan.add_argument("--changes", default="out/license_change.parquet")
+    scan.add_argument("--tarballs", default="fixtures/tarballs")
+    scan.add_argument("--output", default="out/scanner_disagreement.parquet")
     return parser
 
 
