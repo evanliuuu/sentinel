@@ -7,3 +7,6 @@ __pycache__/
 derby.log
 metastore_db/
 spark-warehouse/
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/

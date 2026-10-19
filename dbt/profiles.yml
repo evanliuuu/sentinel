@@ -1,0 +1,7 @@
+sentinel:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('SENTINEL_DUCKDB', 'out/warehouse.duckdb') }}"
+      threads: 1

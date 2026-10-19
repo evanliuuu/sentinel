@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: license_change
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: system
+        data_type: varchar
+        tests:
+          - not_null
+      - name: name
+        data_type: varchar
+        tests:
+          - not_null
+      - name: version
+        data_type: varchar
+        tests:
+          - not_null
+      - name: previous_license
+        data_type: varchar
+        tests:
+          - not_null
+      - name: license
+        data_type: varchar
+        tests:
+          - not_null
+      - name: dependent_count
+        data_type: bigint
+        tests:
+          - not_null
+          - non_negative
+    tests:
+      - grain:
+          columns: ["system", "name", "version"]
