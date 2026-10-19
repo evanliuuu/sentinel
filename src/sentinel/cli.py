@@ -2,6 +2,7 @@ import argparse
 from collections.abc import Callable
 
 from sentinel.license_changes import write_license_changes
+from sentinel.lookalikes import DEFAULT_POPULAR_THRESHOLD, write_lookalikes
 from sentinel.model import Snapshot, SnapshotError, load_snapshot
 
 
@@ -30,9 +31,16 @@ def _licenses(args: argparse.Namespace) -> int:
     return 0
 
 
+def _squats(args: argparse.Namespace) -> int:
+    for row in write_lookalikes(args.snapshot, args.output, args.popular_threshold):
+        print(f"{row.name} {row.popular_name} distance {row.edit_distance}")
+    return 0
+
+
 _COMMANDS: dict[str, Callable[[argparse.Namespace], int]] = {
     "fixture": _fixture,
     "licenses": _licenses,
+    "squats": _squats,
 }
 
 
@@ -45,6 +53,10 @@ def _parser() -> argparse.ArgumentParser:
     licenses = commands.add_parser("licenses")
     licenses.add_argument("--snapshot", default="fixtures/snapshot.json")
     licenses.add_argument("--output", default="out/license_change.parquet")
+    squats = commands.add_parser("squats")
+    squats.add_argument("--snapshot", default="fixtures/snapshot.json")
+    squats.add_argument("--output", default="out/lookalikes.parquet")
+    squats.add_argument("--popular-threshold", type=int, default=DEFAULT_POPULAR_THRESHOLD)
     return parser
 
 

@@ -1,6 +1,4 @@
 import json
-import os
-import sys
 from pathlib import Path
 
 import pyarrow as pa
@@ -9,9 +7,7 @@ from packaging.version import Version
 
 from sentinel.model import LicenseChange, PackageVersion, SnapshotError, load_snapshot
 
-os.environ.setdefault("SPARK_LOCAL_IP", "127.0.0.1")
-os.environ["PYSPARK_PYTHON"] = sys.executable
-os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+from sentinel.spark import session
 
 CHANGE_SQL = """
 SELECT system, name, version, previous_license, license
@@ -62,7 +58,7 @@ def version_rows(snapshot_path: str | Path) -> list[dict[str, object]]:
 def find_license_changes(rows: list[dict[str, object]]) -> tuple[LicenseChange, ...]:
     if not rows:
         return ()
-    spark = _session()
+    spark = session()
     frame = spark.createDataFrame(rows)
     frame.createOrReplaceTempView("versions")
     collected = spark.sql(CHANGE_SQL).collect()
@@ -117,22 +113,3 @@ def _ordered_rows(packages: tuple[PackageVersion, ...]) -> list[dict[str, object
     return rows
 
 
-def _session():
-    from pyspark.sql import SparkSession
-
-    warehouse = Path(os.environ.get("TMPDIR", "/tmp")) / "sentinel-spark"
-    warehouse.mkdir(parents=True, exist_ok=True)
-    spark = (
-        SparkSession.builder.master("local[1]")
-        .appName("sentinel")
-        .config("spark.ui.enabled", "false")
-        .config("spark.sql.shuffle.partitions", "1")
-        .config("spark.sql.warehouse.dir", warehouse.as_posix())
-        .config("spark.driver.host", "127.0.0.1")
-        .config("spark.pyspark.python", sys.executable)
-        .config("spark.pyspark.driver.python", sys.executable)
-        .config("spark.ui.showConsoleProgress", "false")
-        .getOrCreate()
-    )
-    spark.sparkContext.setLogLevel("ERROR")
-    return spark
